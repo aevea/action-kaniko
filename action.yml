@@ -1,0 +1,43 @@
+# kaniko.yml
+name: "Kaniko builder"
+description: "Build and push docker images using Kaniko"
+branding:
+  icon: anchor
+  color: orange
+inputs:
+  registry:
+    description: "Docker registry where the image will be pushed"
+    required: false
+  username:
+    description: "Username used for authentication to the Docker registry"
+    required: false
+  password:
+    description: "Password used for authentication to the Docker registry"
+    required: false
+  image:
+    description: "Image name"
+    required: true
+  tag:
+    description: "Image tag"
+    required: false
+  cache:
+    description: "Enables build cache"
+    required: false
+  cache_ttl:
+    description: "How long the cache should be considered valid"
+    required: false
+  cache_registry:
+    description: "Docker registry meant to be used as cache"
+    required: false
+  cache_directory:
+    description: "Filesystem path meant to be used as cache"
+    required: false
+  build_file:
+    description: "Dockerfile filename"
+    required: false
+  extra_args:
+    description: "Additional arguments to be passed to the kaniko executor"
+    required: false
+runs:
+  using: "docker"
+  image: "Dockerfile"
