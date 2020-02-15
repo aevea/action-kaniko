@@ -1,0 +1,27 @@
+# kaniko.yml
+name: "Kaniko builder"
+description: "Build and push docker images using Kaniko"
+inputs:
+  registry:
+    description: "Docker registry where the image will be pushed"
+    required: false
+    default: "docker.io"
+  username:
+    description: "Username used for authentication to the Docker registry"
+    required: false
+    default: "$GITHUB_ACTOR"
+  password:
+    description: "Password used for authentication to the Docker registry"
+    required: false
+    default: "$GITHUB_TOKEN"
+  image:
+    description: "Image name"
+    required: false
+    default: "$GITHUB_REPOSITORY"
+  tag:
+    description: "Image tag"
+    required: false
+    default: "$GITHUB_REF (master -> latest)"
+runs:
+  using: "docker"
+  image: "Dockerfile"
