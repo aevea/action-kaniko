@@ -1,21 +1,12 @@
-name: Release
-on:
-  push:
-    tags:
-      - "v*"
+name: Commit
+on: push
 
 jobs:
-  release-notes:
-    name: Release Notes
+  docker:
     runs-on: ubuntu-latest
+    name: Build docker image
     steps:
-      - name: Check out code
-        uses: actions/checkout@v1
-
-      - name: Release Notary Action
-        uses: docker://commitsar/release-notary
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@master
 
       - name: GitHub Package Registry
         uses: outillage/kaniko-action@master
