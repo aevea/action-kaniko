@@ -26,7 +26,7 @@ sanitize "${TAG}" "tag"
 if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     export IMAGE="$GITHUB_REPOSITORY/$IMAGE"
 
-    if [ -z $INPUT_CACHE_REGISTRY ]; then
+    if [ ! -z $INPUT_CACHE_REGISTRY ]; then
         export INPUT_CACHE_REGISTRY="$GITHUB_REPOSITORY/$INPUT_CACHE_REGISTRY"
     fi
 fi
