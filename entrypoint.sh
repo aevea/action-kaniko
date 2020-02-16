@@ -27,7 +27,7 @@ if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     export IMAGE="$GITHUB_REPOSITORY/$IMAGE"
 
     if [ ! -z $INPUT_CACHE_REGISTRY ]; then
-        export INPUT_CACHE_REGISTRY="$GITHUB_REPOSITORY/$INPUT_CACHE_REGISTRY"
+        export INPUT_CACHE_REGISTRY="$REGISTRY/$GITHUB_REPOSITORY/$INPUT_CACHE_REGISTRY"
     fi
 fi
 
