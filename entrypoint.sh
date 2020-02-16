@@ -3,7 +3,7 @@ set -e pipefail
 
 export REGISTRY=${INPUT_REGISTRY:-"docker.io"}
 export IMAGE=${INPUT_IMAGE}
-export BRANCH=$(echo ${GITHUB_REF} | sed -e "s/refs\/heads\///g" | sed -e "s/\//-/g")
+export BRANCH=$(echo ${GITHUB_REF} | sed -E "s/refs\/(heads|tags)\///g" | sed -e "s/\//-/g")
 export TAG=${INPUT_TAG:-$([ "$BRANCH" == "master" ] && echo latest || echo $BRANCH)}
 export TAG=${TAG:-"latest"}
 export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
