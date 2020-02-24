@@ -33,24 +33,25 @@ jobs:
 This action aims to be as flexible as possible, so it tries to define the defaults as for what I thought of being
 the most used values. So, technically there is a single required argument
 
-| variable        | description                                              | required | default                     |
-|-----------------|----------------------------------------------------------|----------|-----------------------------|
-| image           | Name of the image you would like to push                 | true     |                             |
+| variable         | description                                              | required | default                     |
+|------------------|----------------------------------------------------------|----------|-----------------------------|
+| image            | Name of the image you would like to push                 | true     |                             |
 
 ## Optional Arguments
 
-| variable        | description                                              | required | default                     |
-|-----------------|----------------------------------------------------------|----------|-----------------------------|
-| registry        | Docker registry where the image will be pushed           | false    | docker.io                   |
-| username        | Username used for authentication to the Docker registry  | false    | $GITHUB_ACTOR               |
-| password        | Password used for authentication to the Docker registry  | false    |                             |
-| tag             | Image tag                                                | false    | latest                      |
-| cache           | Enables build cache                                      | false    | false                       |
-| cache_ttl       | How long the cache should be considered valid            | false    |                             |
-| cache_registry  | Docker registry meant to be used as cache                | false    |                             |
-| cache_directory | Filesystem path meant to be used as cache                | false    |                             |
-| build_file      | Dockerfile filename                                      | false    | Dockerfile                  |
-| extra_args      | Additional arguments to be passed to the kaniko executor | false    |                             |
+| variable         | description                                              | required | default                     |
+|------------------|----------------------------------------------------------|----------|-----------------------------|
+| registry         | Docker registry where the image will be pushed           | false    | docker.io                   |
+| username         | Username used for authentication to the Docker registry  | false    | $GITHUB_ACTOR               |
+| password         | Password used for authentication to the Docker registry  | false    |                             |
+| tag              | Image tag                                                | false    | latest                      |
+| cache            | Enables build cache                                      | false    | false                       |
+| cache_ttl        | How long the cache should be considered valid            | false    |                             |
+| cache_registry   | Docker registry meant to be used as cache                | false    |                             |
+| cache_directory  | Filesystem path meant to be used as cache                | false    |                             |
+| build_file       | Dockerfile filename                                      | false    | Dockerfile                  |
+| extra_args       | Additional arguments to be passed to the kaniko executor | false    |                             |
+| strip_tag_prefix | Prefix to be stripped from the tag                       | false    |                             |
 
 **Here is where it gets specific, as the optional arguments become required depending on the registry targeted**
 
@@ -154,3 +155,18 @@ If you would like to publish the image to other registries, these actions might 
 
 The `tag` argument, **unless overridden**, is automatically guessed based on the branch name. If the branch is `master` then the tag will
 be `latest`, otherwise it will keep the branch name, but replacing any forward slash (/) with a hyphen (-).
+
+If the `v` prefix that it's usually added to the GitHub releases is not desired when pushed to dockerhub, the `strip_tag_prefix` allows to
+specify which part of the tag should be removed.
+
+Example:
+
+```yaml
+with:
+  registry: docker.pkg.github.com
+  password: ${{ secrets.GITHUB_TOKEN }}
+  image: kaniko
+  strip_tag_prefix: pre-
+```
+
+for the tag `pre-0.1` will push `kaniko:0.1`, as the `pre-` part will be stripped from the tag name.

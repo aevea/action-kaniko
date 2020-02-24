@@ -35,6 +35,9 @@ inputs:
   build_file:
     description: "Dockerfile filename"
     required: false
+  strip_tag_prefix:
+    description: "Prefix to be stripped from the tag"
+    required: false
   extra_args:
     description: "Additional arguments to be passed to the kaniko executor"
     required: false
