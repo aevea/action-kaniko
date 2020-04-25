@@ -8,4 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Run commitsar
-        uses: docker://commitsar/commitsar
+        uses: docker://aevea/commitsar

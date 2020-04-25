@@ -4,5 +4,5 @@ COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-LABEL repository="https://github.com/outillage/action-kaniko" \
+LABEL repository="https://github.com/aevea/action-kaniko" \
     maintainer="Alex Viscreanu <alexviscreanu@gmail.com>"

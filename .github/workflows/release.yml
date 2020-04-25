@@ -13,12 +13,12 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Release Notary Action
-        uses: docker://commitsar/release-notary
+        uses: docker://aevea/release-notary
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: GitHub Package Registry
-        uses: outillage/kaniko-action@master
+        uses: aevea/action-kaniko@master
         with:
           registry: docker.pkg.github.com
           password: ${{ secrets.GITHUB_TOKEN }}
@@ -27,10 +27,10 @@ jobs:
           cache_registry: cache
 
       - name: Dockerhub
-        uses: outillage/kaniko-action@master
+        uses: aevea/action-kaniko@master
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          image: outillage/kaniko
+          image: aevea/kaniko
           cache: true
-          cache_registry: outillage/cache
+          cache_registry: aevea/cache
