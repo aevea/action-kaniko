@@ -9,7 +9,7 @@ jobs:
       - uses: actions/checkout@master
 
       - name: GitHub Package Registry
-        uses: outillage/kaniko-action@master
+        uses: aevea/kaniko-action@master
         with:
           registry: docker.pkg.github.com
           password: ${{ secrets.GITHUB_TOKEN }}
@@ -18,10 +18,10 @@ jobs:
           cache_registry: cache
 
       - name: Dockerhub
-        uses: outillage/kaniko-action@master
+        uses: aevea/kaniko-action@master
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          image: outillage/kaniko
+          image: aevea/kaniko
           cache: true
-          cache_registry: outillage/cache
+          cache_registry: aevea/cache
