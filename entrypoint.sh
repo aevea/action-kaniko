@@ -45,7 +45,12 @@ export CACHE=$CACHE${INPUT_CACHE_REGISTRY:+" --cache-repo=$INPUT_CACHE_REGISTRY"
 export CACHE=$CACHE${INPUT_CACHE_DIRECTORY:+" --cache-dir=$INPUT_CACHE_DIRECTORY"}
 export CONTEXT="--context $GITHUB_WORKSPACE"
 export DOCKERFILE="--dockerfile ${INPUT_BUILD_FILE:-Dockerfile}"
-export DESTINATION="--no-push"
+
+if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
+    export DESTINATION="--no-push --digest-file digest"
+else
+    export DESTINATION="--destination $IMAGE"
+fi
 
 export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
 
@@ -60,23 +65,24 @@ cat <<EOF >/kaniko/.docker/config.json
 }
 EOF
 
-/kaniko/executor --digest-file digest --reproducible $ARGS
-
-export DIGEST=$(cat digest)
-export REMOTE=$(reg digest "$IMAGE" | tail -1)
+/kaniko/executor --reproducible $ARGS
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
+    export DIGEST=$(cat digest)
+    export REMOTE=$(reg digest "$IMAGE" | tail -1)
+
     if [ "$DIGEST" == "$REMOTE" ]; then
         echo "Digest hasn't changed, skipping, $DIGEST"
+        echo "Done 🎉️"
         exit 0
     fi
+
+    export DESTINATION="--destination $IMAGE"
+    export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
+
+    echo "Pushing image..."
+
+    /kaniko/executor --reproducible $ARGS >/dev/null 2>&1
+
+    echo "Done 🎉️"
 fi
-
-export DESTINATION="--destination $IMAGE"
-export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
-
-echo "Pushing image..."
-
-/kaniko/executor --reproducible $ARGS >/dev/null 2>&1
-
-echo "Done 🎉️"
