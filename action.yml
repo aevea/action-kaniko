@@ -41,6 +41,9 @@ inputs:
   extra_args:
     description: "Additional arguments to be passed to the kaniko executor"
     required: false
+  skip_unchanged_digest:
+    description: "Avoids pushing the image if the build generated the same digest"
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
