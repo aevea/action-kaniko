@@ -11,18 +11,18 @@ export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
 export PASSWORD=${INPUT_PASSWORD:-$GITHUB_TOKEN}
 export IMAGE=$IMAGE:$TAG
 
-function sanitize() {
+function ensure() {
     if [ -z "${1}" ]; then
-        echo >&2 "Unable to find the ${2}. Did you set with.${2}?"
+        echo >&2 "Unable to find the ${2} variable. Did you set with.${2}?"
         exit 1
     fi
 }
 
-sanitize "${REGISTRY}" "registry"
-sanitize "${USERNAME}" "username"
-sanitize "${PASSWORD}" "password"
-sanitize "${IMAGE}" "image"
-sanitize "${TAG}" "tag"
+ensure "${REGISTRY}" "registry"
+ensure "${USERNAME}" "username"
+ensure "${PASSWORD}" "password"
+ensure "${IMAGE}" "image"
+ensure "${TAG}" "tag"
 
 if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
