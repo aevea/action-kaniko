@@ -58,6 +58,7 @@ export CACHE=$CACHE${INPUT_CACHE_REGISTRY:+" --cache-repo=$INPUT_CACHE_REGISTRY"
 export CACHE=$CACHE${INPUT_CACHE_DIRECTORY:+" --cache-dir=$INPUT_CACHE_DIRECTORY"}
 export CONTEXT="--context $GITHUB_WORKSPACE/$CONTEXT_PATH"
 export DOCKERFILE="--dockerfile $CONTEXT_PATH/${INPUT_BUILD_FILE:-Dockerfile}"
+export TARGET=${INPUT_TARGET:+"--target=$INPUT_TARGET"}
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DESTINATION="--no-push --digest-file digest"
@@ -68,7 +69,7 @@ else
     fi
 fi
 
-export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
+export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS"
 
 cat <<EOF >/kaniko/.docker/config.json
 {
@@ -104,7 +105,7 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
         export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
     fi
     
-    export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
+    export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS"
 
     echo "Pushing image..."
 

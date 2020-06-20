@@ -51,6 +51,9 @@ inputs:
   tag_with_latest:
     description: "Tags the built image with additional latest tag"
     required: false
+  target:
+    description: Sets the target stage to build
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
