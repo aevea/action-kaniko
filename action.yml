@@ -48,6 +48,9 @@ inputs:
   skip_unchanged_digest:
     description: "Avoids pushing the image if the build generated the same digest"
     required: false
+  tag_with_latest:
+    description: "Tags the built image with additional latest tag"
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
