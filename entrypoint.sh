@@ -11,6 +11,7 @@ export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
 export PASSWORD=${INPUT_PASSWORD:-$GITHUB_TOKEN}
 export REPOSITORY=$IMAGE
 export IMAGE=$IMAGE:$TAG
+export CONTEXT_PATH=${INPUT_PATH}
 
 function ensure() {
     if [ -z "${1}" ]; then
@@ -24,6 +25,7 @@ ensure "${USERNAME}" "username"
 ensure "${PASSWORD}" "password"
 ensure "${IMAGE}" "image"
 ensure "${TAG}" "tag"
+ensure "${CONTEXT_PATH}" "path"
 
 if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
@@ -45,8 +47,8 @@ export CACHE=${INPUT_CACHE:+"--cache=true"}
 export CACHE=$CACHE${INPUT_CACHE_TTL:+" --cache-ttl=$INPUT_CACHE_TTL"}
 export CACHE=$CACHE${INPUT_CACHE_REGISTRY:+" --cache-repo=$INPUT_CACHE_REGISTRY"}
 export CACHE=$CACHE${INPUT_CACHE_DIRECTORY:+" --cache-dir=$INPUT_CACHE_DIRECTORY"}
-export CONTEXT="--context $GITHUB_WORKSPACE"
-export DOCKERFILE="--dockerfile ${INPUT_BUILD_FILE:-Dockerfile}"
+export CONTEXT="--context $GITHUB_WORKSPACE/$CONTEXT_PATH"
+export DOCKERFILE="--dockerfile $CONTEXT_PATH/${INPUT_BUILD_FILE:-Dockerfile}"
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DESTINATION="--no-push --digest-file digest"
