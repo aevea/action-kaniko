@@ -10,6 +10,7 @@ export TAG=${TAG#$INPUT_STRIP_TAG_PREFIX}
 export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
 export PASSWORD=${INPUT_PASSWORD:-$GITHUB_TOKEN}
 export REPOSITORY=$IMAGE
+export IMAGE_LATEST=${INPUT_TAG_WITH_LATEST:+"$IMAGE:latest"}
 export IMAGE=$IMAGE:$TAG
 export CONTEXT_PATH=${INPUT_PATH}
 
@@ -32,6 +33,10 @@ if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     export IMAGE="$IMAGE_NAMESPACE/$IMAGE"
     export REPOSITORY="$IMAGE_NAMESPACE/$REPOSITORY"
 
+    if [ ! -z $IMAGE_LATEST ]; then
+        export IMAGE_LATEST="$IMAGE_NAMESPACE/$IMAGE_LATEST"
+    fi
+
     if [ ! -z $INPUT_CACHE_REGISTRY ]; then
         export INPUT_CACHE_REGISTRY="$REGISTRY/$IMAGE_NAMESPACE/$INPUT_CACHE_REGISTRY"
     fi
@@ -41,6 +46,10 @@ if [ "$REGISTRY" == "docker.io" ]; then
     export REGISTRY="index.${REGISTRY}/v1/"
 else
     export IMAGE="$REGISTRY/$IMAGE"
+
+    if [ ! -z $IMAGE_LATEST ]; then
+        export IMAGE_LATEST="$REGISTRY/$IMAGE_LATEST"
+    fi
 fi
 
 export CACHE=${INPUT_CACHE:+"--cache=true"}
@@ -54,6 +63,9 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DESTINATION="--no-push --digest-file digest"
 else
     export DESTINATION="--destination $IMAGE"
+    if [ ! -z $IMAGE_LATEST ]; then
+        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
+    fi
 fi
 
 export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
@@ -88,6 +100,10 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     fi
 
     export DESTINATION="--destination $IMAGE"
+    if [ ! -z $IMAGE_LATEST ]; then
+        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
+    fi
+    
     export ARGS="$CACHE $CONTEXT $DOCKERFILE $DESTINATION $INPUT_EXTRA_ARGS"
 
     echo "Pushing image..."
