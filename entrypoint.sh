@@ -9,6 +9,7 @@ export TAG=${TAG:-"latest"}
 export TAG=${TAG#$INPUT_STRIP_TAG_PREFIX}
 export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
 export PASSWORD=${INPUT_PASSWORD:-$GITHUB_TOKEN}
+export REPOSITORY=$IMAGE
 export IMAGE=$IMAGE:$TAG
 
 function ensure() {
@@ -27,6 +28,7 @@ ensure "${TAG}" "tag"
 if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
     IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
     export IMAGE="$IMAGE_NAMESPACE/$IMAGE"
+    export REPOSITORY="$IMAGE_NAMESPACE/$REPOSITORY"
 
     if [ ! -z $INPUT_CACHE_REGISTRY ]; then
         export INPUT_CACHE_REGISTRY="$REGISTRY/$IMAGE_NAMESPACE/$INPUT_CACHE_REGISTRY"
@@ -69,7 +71,13 @@ EOF
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DIGEST=$(cat digest)
-    export REMOTE=$(reg digest "$IMAGE" | tail -1)
+
+    if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
+        wget -q -O manifest --header "Authorization: Basic $(echo -n $USERNAME:$PASSWORD | base64)" https://docker.pkg.github.com/v2/$REPOSITORY/manifests/latest || true
+        export REMOTE="sha256:$(cat manifest | sha256sum | awk '{ print $1 }')"
+    else
+        export REMOTE=$(reg digest -u $USERNAME -p $PASSWORD $REGISTRY/$REPOSITORY | tail -1)
+    fi
 
     if [ "$DIGEST" == "$REMOTE" ]; then
         echo "Digest hasn't changed, skipping, $DIGEST"
