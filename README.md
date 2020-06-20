@@ -53,6 +53,7 @@ the most used values. So, technically there is a single required argument
 | extra_args            | Additional arguments to be passed to the kaniko executor        | false    |                 |
 | strip_tag_prefix      | Prefix to be stripped from the tag                              | false    |                 |
 | skip_unchanged_digest | Avoids pushing the image if the build generated the same digest | false    |                 |
+| path                  | Path to the build context. Defaults to `.`                      | false    | .               |
 
 **Here is where it gets specific, as the optional arguments become required depending on the registry targeted**
 

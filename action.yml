@@ -5,6 +5,10 @@ branding:
   icon: anchor
   color: orange
 inputs:
+  path:
+    description: Path to the build context
+    required: false
+    default: "."
   registry:
     description: "Docker registry where the image will be pushed"
     required: false
