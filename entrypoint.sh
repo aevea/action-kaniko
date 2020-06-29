@@ -61,7 +61,7 @@ export DOCKERFILE="--dockerfile $CONTEXT_PATH/${INPUT_BUILD_FILE:-Dockerfile}"
 export TARGET=${INPUT_TARGET:+"--target=$INPUT_TARGET"}
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
-    export DESTINATION="--no-push --digest-file digest"
+    export DESTINATION="--digest-file digest --tarPath image.tar --destination $IMAGE"
 else
     export DESTINATION="--destination $IMAGE"
     if [ ! -z $IMAGE_LATEST ]; then
@@ -101,16 +101,15 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
         exit 0
     fi
 
-    export DESTINATION="--destination $IMAGE"
-    if [ ! -z $IMAGE_LATEST ]; then
-        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
-    fi
-    
-    export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS"
-
     echo "Pushing image..."
 
-    /kaniko/executor --reproducible $ARGS >/dev/null 2>&1
+    /kaniko/crane auth login $REGISTRY -u $USERNAME -p $PASSWORD
+    /kaniko/crane push image.tar $IMAGE
 
+    if [ ! -z $IMAGE_LATEST ]; then
+        echo "Tagging latest..."
+        /kaniko/crane tag $IMAGE latest  
+    fi
+ 
     echo "Done 🎉️"
 fi
