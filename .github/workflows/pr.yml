@@ -8,4 +8,4 @@ jobs:
     steps:
       - uses: actions/checkout@v1
       - name: Run commitsar
-        uses: docker://aevea/commitsar
+        uses: docker://aevea/commitsar@sha256:fa4fd97f10b3ad4222d9f45cf0e9a4f28a3287118d97c38ea6b7355628b0fc88
