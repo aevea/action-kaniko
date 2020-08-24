@@ -13,7 +13,7 @@ jobs:
         uses: actions/checkout@v1
 
       - name: Release Notary Action
-        uses: docker://aevea/release-notary
+        uses: docker://aevea/release-notary@sha256:5eef3c539deb5397457a6acf001ef80df6004ec52bc4b8a0eac0577ad92759d0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
