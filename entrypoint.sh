@@ -89,7 +89,7 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DIGEST=$(cat digest)
 
     if [ "$REGISTRY" == "docker.pkg.github.com" ]; then
-        wget -q -O manifest --header "Authorization: Basic $(echo -n $USERNAME:$PASSWORD | base64)" https://docker.pkg.github.com/v2/$REPOSITORY/manifests/latest || true
+        wget -q -O manifest --header "Authorization: Basic $(echo -n $USERNAME:$PASSWORD | base64 | tr -d \\n)" https://docker.pkg.github.com/v2/$REPOSITORY/manifests/latest || true
         export REMOTE="sha256:$(cat manifest | sha256sum | awk '{ print $1 }')"
     else
         export REMOTE=$(reg digest -u $USERNAME -p $PASSWORD $REGISTRY/$REPOSITORY | tail -1)
