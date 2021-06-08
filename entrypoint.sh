@@ -61,7 +61,7 @@ export DOCKERFILE="--dockerfile $CONTEXT_PATH/${INPUT_BUILD_FILE:-Dockerfile}"
 export TARGET=${INPUT_TARGET:+"--target=$INPUT_TARGET"}
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
-    export DESTINATION="--digest-file digest --tarPath image.tar --destination $IMAGE"
+    export DESTINATION="--digest-file digest --no-push --tarPath image.tar --destination $IMAGE"
 else
     export DESTINATION="--destination $IMAGE"
     if [ ! -z $IMAGE_LATEST ]; then
