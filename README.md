@@ -1,5 +1,7 @@
 # Kaniko image builder
 
+**This is a fork that will build a list of images specified in a file.**
+
 This Action uses the [kaniko](https://github.com/GoogleContainerTools/kaniko) executor instead of the docker daemon. Kaniko builds the image
 by extracting the filesystem of the base image, making the changes in the user space, snapshotting any change and appending it to the base
 image filesystem.
@@ -21,7 +23,7 @@ jobs:
       - name: Kaniko build
         uses: aevea/action-kaniko@master
         with:
-          image: aevea/kaniko
+          image: ohioit/action-kaniko
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           cache: true
@@ -56,6 +58,33 @@ the most used values. So, technically there is a single required argument
 | path                  | Path to the build context. Defaults to `.`                      | false    | .               |
 | tag_with_latest       | Tags the built image with additional latest tag                 | false    |                 |
 | target                | Sets the target stage to build                                  | false    |                 |
+| image_list            | Comma separated list of images to build.  The list has the following format: context image_name:tag | false | |
+| image_list_file       | Newline separated list of images to build.  The list has the following format: context image_name tag | false | |
+
+
+### image_list example
+
+Each element in the list must have the following format `build_context image_name:image_tag` or `build_context image_name image_tag`.
+
+```yaml
+with:
+  image: ohioit/action-kaniko
+  image_list: . my_image_name:v1.0.0,resource my_image_name_2:v1.2.4
+```
+
+### image_list_file example
+
+```yaml
+with:
+  image: ohioit/action-kaniko
+  image_list: images
+```
+
+The content of the `images` file is shown below.  Each line in the file must have the format `build_context image_name image_tag name_dockerfile`.
+```prose
+. my_image_name v1.0.0 Dockerfile
+resource my_image_name_2 v1.2.4 Dockerfile.dev
+```
 
 **Here is where it gets specific, as the optional arguments become required depending on the registry targeted**
 
@@ -66,7 +95,7 @@ In this case, the authentication credentials need to be passed via GitHub Action
 
 ```yaml
 with:
-  image: aevea/kaniko
+  image: ohioit/action-kaniko
   username: ${{ secrets.DOCKERHUB_USERNAME }}
   password: ${{ secrets.DOCKERHUB_PASSWORD }}
 ```
@@ -76,14 +105,14 @@ doesn't work. If you want to use caching with Dockerhub, create a `cache` reposi
 
 ```yaml
 with:
-  image: aevea/kaniko
+  image: ohioit/action-kaniko
   username: ${{ secrets.DOCKERHUB_USERNAME }}
   password: ${{ secrets.DOCKERHUB_PASSWORD }}
   cache: true
   cache_registry: aevea/cache
 ```
 
-### [docker.pkg.github.com](https://github.com/features/packages)
+### [ghcr.io](https://github.com/features/packages)
 
 GitHub's docker registry is a bit special. It doesn't allow top-level images, so this action will prefix any image with the GitHub namespace.
 If you want to push your image like `aevea/action-kaniko/kaniko`, you'll only need to pass `kaniko` to this action.
@@ -93,7 +122,7 @@ passed by default, it will have to be explicitly set up.
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
 ```
@@ -104,7 +133,7 @@ cache layers to that image instead
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
   cache: true
@@ -129,7 +158,7 @@ with:
   registry: registry.gitlab.com
   username: ${{ secrets.GL_REGISTRY_USERNAME }}
   password: ${{ secrets.GL_REGISTRY_PASSWORD }}
-  image: aevea/kaniko
+  image: ohioit/action-kaniko
 ```
 
 > NOTE: As GitLab's registry does support namespacing, Kaniko can natively push cached layers to it, so only `cache: true` is necessary to be
@@ -140,7 +169,7 @@ with:
   registry: registry.gitlab.com
   username: ${{ secrets.GL_REGISTRY_USERNAME }}
   password: ${{ secrets.GL_REGISTRY_PASSWORD }}
-  image: aevea/kaniko
+  image: ohioit/action-kaniko
   cache: true
 ```
 
@@ -167,7 +196,7 @@ Example:
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
   strip_tag_prefix: pre-

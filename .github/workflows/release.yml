@@ -1,36 +1,28 @@
-name: Release
-on:
-  push:
-    tags:
-      - "v*"
+# name: Release
+# on:
+#   push:
+#     tags:
+#       - "v*"
 
-jobs:
-  release-notes:
-    name: Release Notes
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v1
+# jobs:
+#   release-notes:
+#     name: Release Notes
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Check out code
+#         uses: actions/checkout@v1
 
-      - name: Release Notary Action
-        uses: docker://aevea/release-notary@sha256:5eef3c539deb5397457a6acf001ef80df6004ec52bc4b8a0eac0577ad92759d0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Release Notary Action
+#         uses: docker://aevea/release-notary@sha256:5eef3c539deb5397457a6acf001ef80df6004ec52bc4b8a0eac0577ad92759d0
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: GitHub Package Registry
-        uses: aevea/action-kaniko@master
-        with:
-          registry: docker.pkg.github.com
-          password: ${{ secrets.GITHUB_TOKEN }}
-          image: kaniko
-          cache: true
-          cache_registry: cache
+#       - name: GitHub Package Registry
+#         uses: ohioit/action-kaniko@master
+#         with:
+#           registry: ghcr.io
+#           password: ${{ secrets.GITHUB_TOKEN }}
+#           image: kaniko
+#           cache: true
+#           cache_registry: cache
 
-      - name: Dockerhub
-        uses: aevea/action-kaniko@master
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          image: aevea/kaniko
-          cache: true
-          cache_registry: aevea/cache

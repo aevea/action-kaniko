@@ -1,5 +1,5 @@
 # kaniko.yml
-name: "Kaniko builder"
+name: "Ohio University Kaniko builder"
 description: "Build and push docker images using Kaniko"
 branding:
   icon: anchor
@@ -19,8 +19,16 @@ inputs:
     description: "Password used for authentication to the Docker registry"
     required: false
   image:
-    description: "Image name"
-    required: true
+    description: "Image name. If specified the ais build config will be ignored."
+    required: false
+  image_list_file: 
+    description: "A file containing a list of images to build.  If this is specified the image, tag, and path parameters will be ignored."
+    required: false
+  build_config:
+    description: |
+      Path to a ais build config file.
+    required: false
+    default: './ais-build.yaml'
   tag:
     description: "Image tag"
     required: false

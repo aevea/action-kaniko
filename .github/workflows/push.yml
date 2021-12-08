@@ -9,19 +9,11 @@ jobs:
       - uses: actions/checkout@master
 
       - name: GitHub Package Registry
-        uses: aevea/action-kaniko@master
+        uses: ohioit/action-kaniko@master
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           password: ${{ secrets.GITHUB_TOKEN }}
           image: kaniko
           cache: true
           cache_registry: cache
 
-      - name: Dockerhub
-        uses: aevea/action-kaniko@master
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
-          image: aevea/kaniko
-          cache: true
-          cache_registry: aevea/cache
