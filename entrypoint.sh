@@ -10,9 +10,12 @@ export TAG=${TAG#$INPUT_STRIP_TAG_PREFIX}
 export USERNAME=${INPUT_USERNAME:-$GITHUB_ACTOR}
 export PASSWORD=${INPUT_PASSWORD:-$GITHUB_TOKEN}
 export REPOSITORY=$IMAGE
-export IMAGE_LATEST=${INPUT_TAG_WITH_LATEST:+"$IMAGE:latest"}
 export IMAGE=$IMAGE:$TAG
 export CONTEXT_PATH=${INPUT_PATH}
+
+if [[ "$INPUT_TAG_WITH_LATEST" == "true" ]]; then
+    export IMAGE_LATEST="$IMAGE:latest"
+fi
 
 function ensure() {
     if [ -z "${1}" ]; then
