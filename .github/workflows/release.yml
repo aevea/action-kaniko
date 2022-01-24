@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
       - name: Release Notary Action
         uses: docker://aevea/release-notary@sha256:8b26ced466da96b23a947d5c9e58baac22ee1192fd08200011e5b178f42118a0
