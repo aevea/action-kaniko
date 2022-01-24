@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v2
 
       - name: Release Notary Action
         uses: docker://aevea/release-notary@sha256:fad8346e2c6d56e78987f84c0e70676b7ed4d1ccffdb4f2f799c7f0d972ce55c

@@ -6,6 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     name: Verify commit messages
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Run commitsar
         uses: docker://aevea/commitsar@sha256:b77adebc0437d4f2bfdf9205a39003e88acbc77a9176fd086b386207a5f3f5cb
