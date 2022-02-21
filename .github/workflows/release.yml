@@ -22,7 +22,7 @@ jobs:
       - name: GitHub Package Registry
         uses: aevea/action-kaniko@master
         with:
-          registry: docker.pkg.github.com
+          registry: ghcr.io
           password: ${{ secrets.GITHUB_TOKEN }}
           image: kaniko
           cache: true
