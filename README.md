@@ -83,7 +83,7 @@ with:
   cache_registry: aevea/cache
 ```
 
-### [docker.pkg.github.com](https://github.com/features/packages)
+### [ghcr.io](https://github.com/features/packages)
 
 GitHub's docker registry is a bit special. It doesn't allow top-level images, so this action will prefix any image with the GitHub namespace.
 If you want to push your image like `aevea/action-kaniko/kaniko`, you'll only need to pass `kaniko` to this action.
@@ -93,7 +93,7 @@ passed by default, it will have to be explicitly set up.
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
 ```
@@ -104,7 +104,7 @@ cache layers to that image instead
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
   cache: true
@@ -167,7 +167,7 @@ Example:
 
 ```yaml
 with:
-  registry: docker.pkg.github.com
+  registry: ghcr.io
   password: ${{ secrets.GITHUB_TOKEN }}
   image: kaniko
   strip_tag_prefix: pre-
