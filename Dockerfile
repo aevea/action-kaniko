@@ -2,7 +2,7 @@ FROM alpine as certs
 
 RUN apk --update add ca-certificates
 
-FROM gcr.io/kaniko-project/executor:debug
+FROM gcr.io/kaniko-project/executor:v1.7.0-debug
 
 SHELL ["/busybox/sh", "-c"]
 
