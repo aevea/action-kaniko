@@ -75,8 +75,10 @@ do
     INPUT_IMAGE=$(trim ${INPUT_IMAGE})
     INPUT_TAG=$(trim ${INPUT_TAG})
     INPUT_DOCKERFILE=$(trim ${INPUT_DOCKERFILE})
+    SKAFFOLD_BUILD_ARGS=$(yq eval '.images[] | select(.imageName = env(INPUT_IMAGE)) | .docker.buildArgs[] | key + "=" + . | "--build-arg " + .' ais-build.yaml | tr  '\n' ' ')
+    
 
-    echo "Processing: context: [${INPUT_PATH}] image: [${INPUT_IMAGE}] tag: [${INPUT_TAG}] dockerfile: [${INPUT_DOCKERFILE}]"
+    echo "Processing: context: [${INPUT_PATH}] image: [${INPUT_IMAGE}] tag: [${INPUT_TAG}] dockerfile: [${INPUT_DOCKERFILE}] skaffold buildArgs: [${SKAFFOLD_BUILD_ARGS}]"
 
     export IMAGE=${INPUT_IMAGE}
     export TAG=${INPUT_TAG:-$([ "$BRANCH" == "master" ] && echo latest || echo $BRANCH)}
@@ -128,7 +130,7 @@ do
         fi
     fi
 
-    export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS"
+    export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS ${SKAFFOLD_BUILD_ARGS}"
 
     cat <<EOF >/kaniko/.docker/config.json
 {

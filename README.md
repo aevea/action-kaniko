@@ -9,6 +9,8 @@ image filesystem.
 This allows for a quite efficient caching, that can be pushed to another docker registry and downloaded on-demand, and a noticeably easier and
 more secure secret passing to the build context, as it happens in the user space itself.
 
+**Note**: skaffold buildArgs that use golang template syntax are **not** supported.
+
 ## Usage
 
 ## Example pipeline
