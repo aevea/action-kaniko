@@ -1,5 +1,8 @@
 #!/busybox/sh
 set -e pipefail
+if [[ "$INPUT_DEBUG" == "true" ]]; then
+    set -o xtrace
+fi
 
 export REGISTRY=${INPUT_REGISTRY:-"docker.io"}
 export IMAGE=${INPUT_IMAGE}
