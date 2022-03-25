@@ -14,7 +14,7 @@ export IMAGE=$IMAGE:$TAG
 export CONTEXT_PATH=${INPUT_PATH}
 
 if [[ "$INPUT_TAG_WITH_LATEST" == "true" ]]; then
-    export IMAGE_LATEST="$IMAGE:latest"
+    export IMAGE_LATEST="$REPOSITORY:latest"
 fi
 
 function ensure() {
