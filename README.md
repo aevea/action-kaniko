@@ -56,6 +56,7 @@ the most used values. So, technically there is a single required argument
 | path                  | Path to the build context. Defaults to `.`                      | false    | .               |
 | tag_with_latest       | Tags the built image with additional latest tag                 | false    |                 |
 | target                | Sets the target stage to build                                  | false    |                 |
+| debug                 | Enables trace for entrypoint.sh                                 | false    |                 |
 
 **Here is where it gets specific, as the optional arguments become required depending on the registry targeted**
 

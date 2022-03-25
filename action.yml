@@ -54,6 +54,9 @@ inputs:
   target:
     description: Sets the target stage to build
     required: false
+  debug:
+    description: Enables trace for entrypoint.sh
+    required: false
 runs:
   using: "docker"
   image: "Dockerfile"
