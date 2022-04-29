@@ -94,12 +94,9 @@ EOF
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     export DIGEST=$(cat digest)
 
-    if [ "$REGISTRY" == "ghcr.io" ]; then
-        wget -q -O manifest --header "Authorization: Basic $(echo -n $USERNAME:$PASSWORD | base64 | tr -d \\n)" https://ghcr.io/v2/$REPOSITORY/manifests/latest || true
-        export REMOTE="sha256:$(cat manifest | sha256sum | awk '{ print $1 }')"
-    else
-        export REMOTE=$(reg digest -u $USERNAME -p $PASSWORD $REGISTRY/$REPOSITORY | tail -1)
-    fi
+    /kaniko/crane auth login $REGISTRY -u $USERNAME -p $PASSWORD
+
+    export REMOTE=$(crane digest $REGISTRY/${REPOSITORY}:latest)
 
     if [ "$DIGEST" == "$REMOTE" ]; then
         echo "Digest hasn't changed, skipping, $DIGEST"
@@ -108,8 +105,7 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     fi
 
     echo "Pushing image..."
-
-    /kaniko/crane auth login $REGISTRY -u $USERNAME -p $PASSWORD
+    
     /kaniko/crane push image.tar $IMAGE
 
     if [ ! -z $IMAGE_LATEST ]; then
