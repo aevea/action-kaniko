@@ -88,6 +88,9 @@ cat <<EOF >/kaniko/.docker/config.json
 }
 EOF
 
+# https://github.com/GoogleContainerTools/kaniko/issues/1803
+export IFS=''
+
 # https://github.com/GoogleContainerTools/kaniko/issues/1349
 /kaniko/executor --reproducible --force $ARGS
 
