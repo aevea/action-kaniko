@@ -71,7 +71,7 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
 else
     export DESTINATION="--destination $IMAGE"
     if [ ! -z $IMAGE_LATEST ]; then
-        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"  
+        export DESTINATION="$DESTINATION --destination $IMAGE_LATEST"
     fi
 fi
 
@@ -88,8 +88,13 @@ cat <<EOF >/kaniko/.docker/config.json
 }
 EOF
 
+# https://github.com/GoogleContainerTools/kaniko/issues/1803
 # https://github.com/GoogleContainerTools/kaniko/issues/1349
-/kaniko/executor --reproducible --force $ARGS
+export IFS=''
+kaniko_cmd="/kaniko/executor ${ARGS} --reproducible --force"
+echo "Running kaniko command ${kaniko_cmd}"
+eval "${kaniko_cmd}"
+
 echo "image=$IMAGE" >> $GITHUB_OUTPUT
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
@@ -106,13 +111,13 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
     fi
 
     echo "Pushing image..."
-    
+
     /kaniko/crane push image.tar $IMAGE
 
     if [ ! -z $IMAGE_LATEST ]; then
         echo "Tagging latest..."
-        /kaniko/crane tag $IMAGE latest  
+        /kaniko/crane tag $IMAGE latest
     fi
- 
+
     echo "Done 🎉️"
 fi
