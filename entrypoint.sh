@@ -35,16 +35,14 @@ ensure "${TAG}" "tag"
 ensure "${CONTEXT_PATH}" "path"
 
 if [ "$REGISTRY" == "ghcr.io" ]; then
-    IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
-    export IMAGE="$IMAGE_NAMESPACE/$IMAGE"
-    export REPOSITORY="$IMAGE_NAMESPACE/$REPOSITORY"
+    export IMAGE="$GITHUB_REPOSITORY_OWNER/$IMAGE"
 
     if [ ! -z $IMAGE_LATEST ]; then
-        export IMAGE_LATEST="$IMAGE_NAMESPACE/$IMAGE_LATEST"
+        export IMAGE_LATEST="$GITHUB_REPOSITORY_OWNER/$IMAGE_LATEST"
     fi
 
     if [ ! -z $INPUT_CACHE_REGISTRY ]; then
-        export INPUT_CACHE_REGISTRY="$REGISTRY/$IMAGE_NAMESPACE/$INPUT_CACHE_REGISTRY"
+        export INPUT_CACHE_REGISTRY="$REGISTRY/$GITHUB_REPOSITORY_OWNER/$INPUT_CACHE_REGISTRY"
     fi
 fi
 
