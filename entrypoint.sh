@@ -36,11 +36,13 @@ ensure "${CONTEXT_PATH}" "path"
 
 if [ "$REGISTRY" == "ghcr.io" ]; then
     IMAGE_NAMESPACE="$(echo $GITHUB_REPOSITORY | tr '[:upper:]' '[:lower:]')"
-    export IMAGE="$IMAGE_NAMESPACE/$IMAGE"
-    export REPOSITORY="$IMAGE_NAMESPACE/$REPOSITORY"
+    # Set `/` separator, unless image is pre-fixed with dash or slash
+    [ -n "$REPOSITORY" ] && [[ ! "$REPOSITORY" =~ ^[-/] ]] && SEPARATOR="/"
+    export IMAGE="$IMAGE_NAMESPACE$SEPARATOR$IMAGE"
+    export REPOSITORY="$IMAGE_NAMESPACE$SEPARATOR$REPOSITORY"
 
     if [ ! -z $IMAGE_LATEST ]; then
-        export IMAGE_LATEST="$IMAGE_NAMESPACE/$IMAGE_LATEST"
+        export IMAGE_LATEST="$IMAGE_NAMESPACE$SEPARATOR$IMAGE_LATEST"
     fi
 
     if [ ! -z $INPUT_CACHE_REGISTRY ]; then
