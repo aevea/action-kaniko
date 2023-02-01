@@ -57,6 +57,9 @@ inputs:
   debug:
     description: Enables trace for entrypoint.sh
     required: false
+outputs:
+  image:
+    description: "Full reference to the built image with registry and tag"
 runs:
   using: "docker"
   image: "Dockerfile"

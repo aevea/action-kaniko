@@ -175,3 +175,9 @@ with:
 ```
 
 for the tag `pre-0.1` will push `kaniko:0.1`, as the `pre-` part will be stripped from the tag name.
+
+## Outputs
+
+### `image`
+
+Full reference to the built image with registry and tag.
