@@ -10,6 +10,7 @@ more secure secret passing to the build context, as it happens in the user space
 ## Usage
 
 ## Example pipeline
+
 ```yaml
 name: Docker build
 on: push
@@ -26,6 +27,11 @@ jobs:
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
           cache: true
           cache_registry: aevea/cache
+          tags: >-
+            test,
+            1.0.1,
+            latest
+
 ```
 
 ## Required Arguments
@@ -33,30 +39,30 @@ jobs:
 This action aims to be as flexible as possible, so it tries to define the defaults as for what I thought of being
 the most used values. So, technically there is a single required argument
 
-| variable         | description                                              | required | default                     |
-|------------------|----------------------------------------------------------|----------|-----------------------------|
-| image            | Name of the image you would like to push                 | true     |                             |
+| variable | description                              | required | default |
+| -------- | ---------------------------------------- | -------- | ------- |
+| image    | Name of the image you would like to push | true     |         |
 
 ## Optional Arguments
 
-| variable              | description                                                     | required | default         |
-|-----------------------|-----------------------------------------------------------------|----------|-----------------|
-| registry              | Docker registry where the image will be pushed                  | false    | docker.io       |
-| username              | Username used for authentication to the Docker registry         | false    | $GITHUB_ACTOR   |
-| password              | Password used for authentication to the Docker registry         | false    |                 |
-| tag                   | Image tag                                                       | false    | latest          |
-| cache                 | Enables build cache                                             | false    | false           |
-| cache_ttl             | How long the cache should be considered valid                   | false    |                 |
-| cache_registry        | Docker registry meant to be used as cache                       | false    |                 |
-| cache_directory       | Filesystem path meant to be used as cache                       | false    |                 |
-| build_file            | Dockerfile filename                                             | false    | Dockerfile      |
-| extra_args            | Additional arguments to be passed to the kaniko executor        | false    |                 |
-| strip_tag_prefix      | Prefix to be stripped from the tag                              | false    |                 |
-| skip_unchanged_digest | Avoids pushing the image if the build generated the same digest | false    |                 |
-| path                  | Path to the build context. Defaults to `.`                      | false    | .               |
-| tag_with_latest       | Tags the built image with additional latest tag                 | false    |                 |
-| target                | Sets the target stage to build                                  | false    |                 |
-| debug                 | Enables trace for entrypoint.sh                                 | false    |                 |
+| variable              | description                                                                     | required | default       |
+| --------------------- | ------------------------------------------------------------------------------- | -------- | ------------- |
+| registry              | Docker registry where the image will be pushed                                  | false    | docker.io     |
+| username              | Username used for authentication to the Docker registry                         | false    | $GITHUB_ACTOR |
+| password              | Password used for authentication to the Docker registry                         | false    |               |
+| tags                  | Image tags, can be passed as a list with `,` as separator (Check example above) | false    | latest        |
+| cache                 | Enables build cache                                                             | false    | false         |
+| cache_ttl             | How long the cache should be considered valid                                   | false    |               |
+| cache_registry        | Docker registry meant to be used as cache                                       | false    |               |
+| cache_directory       | Filesystem path meant to be used as cache                                       | false    |               |
+| build_file            | Dockerfile filename                                                             | false    | Dockerfile    |
+| extra_args            | Additional arguments to be passed to the kaniko executor                        | false    |               |
+| strip_tag_prefix      | Prefix to be stripped from the tag                                              | false    |               |
+| skip_unchanged_digest | Avoids pushing the image if the build generated the same digest                 | false    |               |
+| path                  | Path to the build context. Defaults to `.`                                      | false    | .             |
+| tag_with_latest       | Tags the built image with additional latest tag                                 | false    |               |
+| target                | Sets the target stage to build                                                  | false    |               |
+| debug                 | Enables trace for entrypoint.sh                                                 | false    |               |
 
 **Here is where it gets specific, as the optional arguments become required depending on the registry targeted**
 
@@ -149,10 +155,10 @@ with:
 
 If you would like to publish the image to other registries, these actions might be helpful
 
-| Registry                                             | Action                                        |
-|------------------------------------------------------|-----------------------------------------------|
-| Amazon Webservices Elastic Container Registry (ECR)  | https://github.com/elgohr/ecr-login-action    |
-| Google Cloud Container Registry                      | https://github.com/elgohr/gcloud-login-action |
+| Registry                                            | Action                                          |
+| --------------------------------------------------- | ----------------------------------------------- |
+| Amazon Webservices Elastic Container Registry (ECR) | <https://github.com/elgohr/ecr-login-action>    |
+| Google Cloud Container Registry                     | <https://github.com/elgohr/gcloud-login-action> |
 
 ### Other arguments details
 
