@@ -21,8 +21,8 @@ inputs:
   image:
     description: "Image name"
     required: true
-  tag:
-    description: "Image tag"
+  tags:
+    description: "List of Image tags"
     required: false
   cache:
     description: "Enables build cache"
