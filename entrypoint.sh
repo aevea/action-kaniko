@@ -67,9 +67,10 @@ export CACHE=$CACHE${INPUT_CACHE_DIRECTORY:+" --cache-dir=$INPUT_CACHE_DIRECTORY
 export CONTEXT="--context $GITHUB_WORKSPACE/$CONTEXT_PATH"
 export DOCKERFILE="--dockerfile $CONTEXT_PATH/${INPUT_BUILD_FILE:-Dockerfile}"
 export TARGET=${INPUT_TARGET:+"--target=$INPUT_TARGET"}
+export DIGEST="--digest-file /kaniko/digest --image-name-tag-with-digest-file=/kaniko/image-tag-digest"
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
-    export DESTINATION="--digest-file digest --no-push --tarPath image.tar --destination $IMAGE"
+    export DESTINATION="--no-push --tarPath image.tar --destination $IMAGE"
 else
     export DESTINATION="--destination $IMAGE"
     if [ ! -z $IMAGE_LATEST ]; then
@@ -77,7 +78,7 @@ else
     fi
 fi
 
-export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DESTINATION $INPUT_EXTRA_ARGS"
+export ARGS="$CACHE $CONTEXT $DOCKERFILE $TARGET $DIGEST $DESTINATION $INPUT_EXTRA_ARGS"
 
 cat <<EOF >/kaniko/.docker/config.json
 {
@@ -98,15 +99,18 @@ echo "Running kaniko command ${kaniko_cmd}"
 eval "${kaniko_cmd}"
 
 echo "image=$IMAGE" >> $GITHUB_OUTPUT
+echo "digest=$(cat /kaniko/digest)" >> $GITHUB_OUTPUT
+echo "image-tag-digest=$(cat /kaniko/image-tag-digest)" >> $GITHUB_OUTPUT
 
 if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
-    export DIGEST=$(cat digest)
+    export DIGEST=$(cat /kaniko/digest)
 
     /kaniko/crane auth login $REGISTRY -u $USERNAME -p $PASSWORD
 
     export REMOTE=$(crane digest $REGISTRY/${REPOSITORY}:latest)
 
     if [ "$DIGEST" == "$REMOTE" ]; then
+        echo "refreshed=false" >> $GITHUB_OUTPUT
         echo "Digest hasn't changed, skipping, $DIGEST"
         echo "Done 🎉️"
         exit 0
@@ -121,5 +125,6 @@ if [ ! -z $INPUT_SKIP_UNCHANGED_DIGEST ]; then
         /kaniko/crane tag $IMAGE latest
     fi
 
+    echo "refreshed=false" >> $GITHUB_OUTPUT
     echo "Done 🎉️"
 fi
