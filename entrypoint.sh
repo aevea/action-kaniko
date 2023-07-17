@@ -92,6 +92,10 @@ EOF
 # https://github.com/GoogleContainerTools/kaniko/issues/1349
 /kaniko/executor --reproducible --force ${ARGS}
 
+echo "::set-output name=DIGEST::$(cat /kaniko/digest)"
+echo "::set-output name=DIGEST_IMAGE_TAG::$(cat /kaniko/image-tag-digest)"
+
+export IMAGE_REFRESHED="true"
 if [ -n "${INPUT_SKIP_UNCHANGED_DIGEST}" ]; then
     DIGEST="$(cat /kaniko/digest)"
     export DIGEST
@@ -101,18 +105,16 @@ if [ -n "${INPUT_SKIP_UNCHANGED_DIGEST}" ]; then
 
     if [ "${DIGEST}" = "${REMOTE}" ]; then
         echo "Digest hasn't changed, skipping, ${DIGEST}"
-        echo "Done "
-        exit 0
-    fi
+        export IMAGE_REFRESHED="false" 
+    else
+        echo "Pushing image..."  
+        /kaniko/crane push image.tar "${IMAGE}"
 
-    echo "Pushing image..."
-    
-    /kaniko/crane push image.tar "${IMAGE}"
-
-    if [ -n "${IMAGE_LATEST}" ]; then
-        echo "Tagging latest..."
-        /kaniko/crane tag "${IMAGE}" "${TAG}"  
+        if [ -n "${IMAGE_LATEST}" ]; then
+            echo "Tagging latest..."
+            /kaniko/crane tag "${IMAGE}" "${TAG}"
+        fi
     fi
- 
+    echo "::set-output name=IMAGE_REFRESHED::${IMAGE_REFRESHED}"
     echo "Done "
 fi
