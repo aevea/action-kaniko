@@ -10,4 +10,4 @@ jobs:
         with:
           fetch-depth: 0
       - name: Run commitsar
-        uses: docker://aevea/commitsar@sha256:18c604faa349035b105bd3706a214d32f0fb87d8b1e9ac7c4b42450579acef33
+        uses: docker://aevea/commitsar@sha256:8d2db4e430dd06e3fcde173add43dada80b37150ba1191a69cda1c0bcdba9cb1
