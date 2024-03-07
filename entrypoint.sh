@@ -94,6 +94,8 @@ EOF
 # https://github.com/GoogleContainerTools/kaniko/issues/1803
 # https://github.com/GoogleContainerTools/kaniko/issues/1349
 export IFS=''
+# Removes a trailing new line
+ARGS=$(echo "${ARGS}" | sed 's/\n*$//')
 kaniko_cmd="/kaniko/executor ${ARGS} --reproducible --force"
 echo "Running kaniko command ${kaniko_cmd}"
 eval "${kaniko_cmd}"
