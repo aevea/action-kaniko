@@ -15,7 +15,7 @@ jobs:
           fetch-depth: 0
 
       - name: Release Notary Action
-        uses: docker://aevea/release-notary@sha256:b77e86ce9ce4b0c8774cdb3b807b756d1d6139d73aca74388560250de259be4e
+        uses: docker://aevea/release-notary@sha256:690915bf87458fd8eb1e1ff0be34b33377f920eda3f38b96c62ecbf897c831f4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
