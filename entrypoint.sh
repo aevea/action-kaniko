@@ -102,7 +102,9 @@ eval "${kaniko_cmd}"
 
 echo "image=$IMAGE" >> "$GITHUB_OUTPUT"
 echo "digest=$(cat /kaniko/digest)" >> "$GITHUB_OUTPUT"
-echo "image-tag-digest=$(cat /kaniko/image-tag-digest)" >> "$GITHUB_OUTPUT"
+echo "image-tag-digest<<EOF" >>"$GITHUB_OUTPUT"
+echo "$(cat /kaniko/image-tag-digest)" >>"$GITHUB_OUTPUT"
+echo 'EOF' >>"$GITHUB_OUTPUT"
 
 
 if [ -n "$INPUT_SKIP_UNCHANGED_DIGEST" ]; then
