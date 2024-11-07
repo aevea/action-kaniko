@@ -1,5 +1,8 @@
 # Kaniko image builder
 
+> [!WARNING]  
+> The kaniko project no longer seems to [have maintainers](https://github.com/GoogleContainerTools/kaniko/issues/3348). Keep this in mind before deciding to use kaniko as your image builder.
+
 This Action uses the [kaniko](https://github.com/GoogleContainerTools/kaniko) executor instead of the docker daemon. Kaniko builds the image
 by extracting the filesystem of the base image, making the changes in the user space, snapshotting any change and appending it to the base
 image filesystem.
