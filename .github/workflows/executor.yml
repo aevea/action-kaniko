@@ -1,0 +1,94 @@
+name: Executor
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # Daily at 6 AM UTC
+  workflow_dispatch: # Allow manual triggering
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: aevea/action-kaniko/executor
+  SOURCE_REPO: chainguard-forks/kaniko
+
+jobs:
+  check-and-build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Get latest tag from source repo
+        id: source-tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          LATEST_TAG=$(gh release view --repo ${{ env.SOURCE_REPO }} --json tagName -q '.tagName' 2>/dev/null || true)
+          if [ -z "$LATEST_TAG" ]; then
+            # Fallback to tags if no releases
+            LATEST_TAG=$(gh api repos/${{ env.SOURCE_REPO }}/tags --jq '.[0].name')
+          fi
+          echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          echo "Latest source tag: $LATEST_TAG"
+
+      - name: Check if tag already exists in registry
+        id: check-tag
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Check if the image with this tag already exists using GitHub Packages API
+          EXISTING_TAGS=$(gh api /users/aevea/packages/container/action-kaniko%2Fexecutor/versions --jq '.[].metadata.container.tags[]' 2>/dev/null || true)
+
+          if echo "$EXISTING_TAGS" | grep -qx "${{ steps.source-tag.outputs.tag }}"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.source-tag.outputs.tag }} already exists, skipping build"
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+            echo "Tag ${{ steps.source-tag.outputs.tag }} does not exist, will build"
+          fi
+
+      - name: Checkout source repository
+        if: steps.check-tag.outputs.exists == 'false'
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          ref: ${{ steps.source-tag.outputs.tag }}
+
+      - name: Set up Docker Buildx
+        if: steps.check-tag.outputs.exists == 'false'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        if: steps.check-tag.outputs.exists == 'false'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push executor image
+        if: steps.check-tag.outputs.exists == 'false'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: deploy/Dockerfile
+          target: kaniko-executor
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.source-tag.outputs.tag }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          build-args: |
+            TARGETARCH=amd64
+            TARGETOS=linux
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Summary
+        run: |
+          if [ "${{ steps.check-tag.outputs.exists }}" = "true" ]; then
+            echo "## Build Skipped" >> $GITHUB_STEP_SUMMARY
+            echo "Tag \`${{ steps.source-tag.outputs.tag }}\` already exists in the registry." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## Build Complete" >> $GITHUB_STEP_SUMMARY
+            echo "Successfully built and pushed \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.source-tag.outputs.tag }}\`" >> $GITHUB_STEP_SUMMARY
+          fi
