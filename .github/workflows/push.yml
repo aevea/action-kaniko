@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     name: Build docker image
     steps:
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v6
 
       - name: GitHub Package Registry
         uses: aevea/action-kaniko@master
