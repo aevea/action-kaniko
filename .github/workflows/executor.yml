@@ -60,7 +60,7 @@ jobs:
 
       - name: Log in to GitHub Container Registry
         if: steps.check-tag.outputs.exists == 'false'
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
